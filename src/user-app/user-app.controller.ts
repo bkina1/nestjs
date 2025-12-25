@@ -11,13 +11,23 @@ import {
   Query,
   ParseIntPipe,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserAppService } from './user-app.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
+import { Roles } from './userapp.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('user-app')
 export class UserAppController {
   constructor(private readonly userAppService: UserAppService) {}
+
+  @Get('admin-only')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  getAdminData() {
+    return 'This is admin-only data';
+  }
 
   @Post()
   @HttpCode(201)
